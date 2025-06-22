@@ -6,7 +6,9 @@ import {
     SafeAreaView, 
     StatusBar, 
     FlatList,
-    ActivityIndicator
+    ActivityIndicator,
+    TextInput,
+    Button
 }
 from "react-native";
 import { useState, useEffect } from "react";
@@ -18,6 +20,9 @@ export default function App() {
     const [postList, setPostlList] = useState([]);
     const [isLoading, setisLoading] = useState(true);
     const [refreshing, setrefreshing] = useState(false);
+    const [postTitle, setpostTitle] = useState("");
+    const [postBody, setpostBody] = useState("");
+    const [isPosting, setisPosting] = useState(false);
 
 
     const fetchData = async (limit = 10) => {
@@ -31,10 +36,30 @@ export default function App() {
 
 
     const handleRefresh = () => {
-        setrefreshing(true)
-        fetchData(20)
-        setrefreshing(false)
-    }
+        setrefreshing(true);
+        fetchData(20);
+        setrefreshing(false);
+    };
+
+
+    const addPost = async () => {
+        setisPosting(true);
+        const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                title: postTitle,
+                body: postBody,
+            }),
+        });
+        const newPost = await response.json();
+        setPostlList([newPost, ...postList]);
+        setpostTitle("");
+        setpostBody("");
+        setisPosting(false);
+    };
 
 
     useEffect(() => {
@@ -53,6 +78,28 @@ export default function App() {
     
     return(
         <SafeAreaView style={styles.container}>
+            <>
+            <View style={styles.inputContainer}>
+            <TextInput 
+                style = {styles.input}
+                placeholder="Post Title"
+                value= {postTitle}
+                onChangeText={setpostTitle}
+            />
+            <TextInput 
+                style = {styles.input}
+                placeholder="Post Body"
+                value= {postBody}
+                onChangeText={setpostBody}
+            />
+
+            <Button 
+                title= {isPosting ? "Adding..." : "Add Post"}
+                onPress={addPost}
+                disabled={isPosting}
+            />
+            </View>
+
             <View style={styles.listContainer}>
                 <FlatList
                     data={postList}
@@ -81,6 +128,7 @@ export default function App() {
                     onRefresh={handleRefresh}
               />
             </View>
+            </>
         </SafeAreaView>
     );
 }
@@ -123,5 +171,20 @@ const styles = StyleSheet.create({
         paddingTop: StatusBar.currentHeight,
         justifyContent: "center",
         alignItems: "center",
+    },
+    inputContainer: {
+        backgroundColor: "white",
+        padding: 16,
+        borderRadius: 8,
+        borderWidth: 1,
+        margin: 16,
+    },
+    input: {
+        height: 40,
+        borderColor: "gray",
+        borderWidth: 1,
+        marginBottom: 8,
+        padding: 8,
+        borderRadius: 8,
     },
 });
