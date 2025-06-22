@@ -17,6 +17,7 @@ export default function App() {
 
     const [postList, setPostlList] = useState([]);
     const [isLoading, setisLoading] = useState(true);
+    const [refreshing, setrefreshing] = useState(false);
 
 
     const fetchData = async (limit = 10) => {
@@ -27,6 +28,14 @@ export default function App() {
         setPostlList(data);
         setisLoading(false);
     };
+
+
+    const handleRefresh = () => {
+        setrefreshing(true)
+        fetchData(20)
+        setrefreshing(false)
+    }
+
 
     useEffect(() => {
         fetchData();
@@ -67,7 +76,10 @@ export default function App() {
                     ListEmptyComponent={<Text>No Posts Found</Text>}
                     ListHeaderComponent={<Text style = {styles.headerText}>Post List</Text>}
                     ListFooterComponent={<Text style = {styles.footerText}>End of List</Text>}
-                />
+                    
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+              />
             </View>
         </SafeAreaView>
     );
