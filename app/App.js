@@ -132,6 +132,7 @@ export default function App() {
     );
 }
 
+// This is the style section
 const styles = StyleSheet.create({
     container: {
         flex: 1,
