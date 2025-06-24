@@ -10,7 +10,7 @@ import {
     Button
 } from "react-native";
 import { useState, useEffect } from "react";
-
+// Create a posting page 
 export default function App() {
     const [postList, setPostList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
